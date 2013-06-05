@@ -68,4 +68,57 @@ this.getNode().src = cs.config.rootPath + this.off;
 reset : function(state){
 state.view.switchOff();
 }
+
+	cs.componentContainer.push({
+name: "cs.display.plot.flot",
+description: "Display data in a flot plot.",
+inputs: [{
+name: "x",
+type: "cs.type.Number"
+}, {
+name: "y",
+type: "cs.type.Number"
+}],
+outputs: [],
+fields:[{
+name: "MAXNUMBER",
+type: "cs.type.Number"
+}],
+image: "display/flower.png",
+blocks: [],
+initialized:false,
+data:[],
+exec : function(state){
+
+state.view.initDisplay();
+if(this.data==null)
+{
+this.data = [];
+}
+
+this.data.push([state.inputs.item(0).getValue(),state.inputs.item(1).getValue()]);
+while(this.data.length>parseFloat(state.fields.item(0).getValue()))
+{
+this.data.shift();
+}
+state.view.updateValue(this.data);
+},
+view : {	
+source : "<div style='min-width: 200px, min-height: 200px' />",
+
+initDisplay : function() {
+$(this.getNode()).width(200);
+$(this.getNode()).height(200);
+this.plot = $.plot($(this.getNode()), [], flot_options);	
+},
+
+updateValue : function(data){
+this.plot.setData([data]);
+this.plot.setupGrid();
+this.plot.draw();
+}
+
+
+}
+
 });
